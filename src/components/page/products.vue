@@ -32,6 +32,25 @@
         </tr>
       </tbody>
     </table>
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li class="page-item" :class="{'disabled': pagination.has_pre === false}">
+          <a class="page-link" href="#" aria-label="Previous" @click.prevent="getProducts(pagination.current_page - 1)">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        <li class="page-item" v-for="pages in pagination.total_pages"
+        :key="pages" :class="{'active':pagination.current_page === pages}">
+          <a class="page-link" href="#" @click.prevent="getProducts(pages)">{{pages}}</a>
+        </li>
+        <li class="page-item" :class="{'disabled': pagination.has_next === false}">
+          <a class="page-link" href="#" aria-label="Next" @click.prevent="getProducts(pagination.current_page + 1)">
+            <span aria-hidden="true" >&raquo;</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
 
     <!-- Modal -->
     <div class="modal fade" id="pdcModal" tabindex="-1" role="dialog"
@@ -56,7 +75,7 @@
             </div>
             <div class="form-group">
               <label for="customFile">或 上傳圖片
-                <i class="fas fa-sync fa-spin"></i>
+                <i class="fas fa-sync fa-spin text-success" v-if="status.preuploadFile"></i>
               </label>
               <input type="file" id="customFile" class="form-control"
                 ref="files" @change="uploadFile">
@@ -164,19 +183,24 @@ export default {
       isLoading:false,
       status:{
         preuploadFile:false,
-      }
+      },
+      pagination:{},  //用來接回傳的分頁資料
     };
   },
 
   methods:{
-    getProducts(){
+    //ES6方法：預設參數，在未有參數傳入前，此函式的page變數皆為"1"
+    getProducts(page = 1){
       const vm = this;
         // 將api以環境變數取代
         vm.isLoading = true;
-      const api=`${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/products`
+        //將api後方加上?page=頁數，即可直接轉跳到指定頁數
+      const api=`${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/products?page=${page}`
         this.$http.get(api).then((response) =>{
           vm.isLoading = false;
           vm.products = response.data.products;
+          vm.pagination = response.data.pagination;
+          console.log(vm.pagination.total_pages);
         })
       },
 
@@ -197,7 +221,7 @@ export default {
       opendropModal(item){
         $('#dropModel').modal('show');
         this.tempProducts = item;
-        console.log(this.tempProducts);
+        // console.log(this.tempProducts);
       },
       updateProducts(){
         const vm = this;
@@ -259,11 +283,14 @@ export default {
        }).then((response)=>{
          vm.status.preuploadFile = false;
          if(response.data.success){
+           // formData直接塞入值會無法雙向綁定(set,get方法未正常)，需要用$set強制寫入
            // vm.tempProducts.imageUrl = response.data.imageUrl;
-           // console.log(vm.tempProducts);
            // vm.$set(要寫入的變數, 要寫入的欄位, 寫入的值)
            vm.$set(vm.tempProducts,'imageUrl',response.data.imageUrl);
-           console.log(vm.products);
+         }else if(response.data.message.message === 'File too large'){
+           this.$bus.$emit('message:push','檔案格式錯誤','success');
+         }else{
+           this.$bus.$emit('message:push',response.data.message,'success');
          }
        })
      }
@@ -271,6 +298,7 @@ export default {
   //在created階段的時候呼叫methods，記得要加this
   created(){
     this.getProducts();
+
   }
 }
 </script>

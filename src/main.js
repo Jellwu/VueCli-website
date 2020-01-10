@@ -12,6 +12,8 @@ import 'bootstrap';
 //插入Vue Loading overlay
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
+//註冊EventBus
+import './bus'
 
 //將cookie寫到localstorage儲存
 axios.defaults.withCredentials = true;
@@ -22,6 +24,7 @@ Vue.config.productionTip = false;
 
 //全域註冊vue loading overlay
 Vue.component('Loading',Loading);
+
 
 /* eslint-disable no-new */
 new Vue({
