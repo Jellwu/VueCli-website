@@ -1,9 +1,10 @@
 <template>
   <div>
-    <div class="text-right">
+    <loading :active.sync="isLoading"></loading>
+    <div class="text-right mb-4">
       <button type="button" class="btn btn-primary" @click="openPdcModal(true)">
-        建立新產品
-      </button>
+        產品新增
+        </button>
     </div>
     <table class="table mt-4">
       <thead>
@@ -26,7 +27,7 @@
           <td v-else="item.is_enabled" class="text-danger">未啟用</td>
           <td>
             <button class="btn btn-outline-dark" @click="openPdcModal(false, item)">編輯</button>
-            <button class="btn btn-outline-danger">刪除</button>
+            <button class="btn btn-outline-danger"@click="opendropModal(item)">刪除</button>
           </td>
         </tr>
       </tbody>
@@ -51,16 +52,16 @@
             <div class="form-group">
               <label for="image">輸入圖片網址</label>
               <input type="text" class="form-control" id="image"
-                placeholder="請輸入圖片連結" v-model="tempProducts.image">
+                placeholder="請輸入圖片連結" v-model="tempProducts.imageUrl">
             </div>
             <div class="form-group">
               <label for="customFile">或 上傳圖片
-                <i class="fas fa-spinner fa-spin"></i>
+                <i class="fas fa-sync fa-spin"></i>
               </label>
               <input type="file" id="customFile" class="form-control"
-                ref="files">
+                ref="files" @change="uploadFile">
             </div>
-            <img img="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=828346ed697837ce808cae68d3ddc3cf&auto=format&fit=crop&w=1350&q=80"
+            <img :src="tempProducts.imageUrl"
               class="img-fluid" alt="">
           </div>
           <div class="col-sm-8">
@@ -127,6 +128,28 @@
   </div>
 </div>
 
+<!-- dropModel -->
+    <div class="modal fade" id="dropModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title" id="exampleModalLabel">刪除確認</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="p-2" v-model="tempProducts.title">
+                <span class="text-danger font-weight-bold">是否刪除{{tempProducts.title}}?</span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+            <button type="button" class="btn btn-danger" @click="dropProducts(tempProducts)">刪除</button>
+          </div>
+        </div>
+      </div>
+    </div>
 </div>
 </template>
 
@@ -138,6 +161,10 @@ export default {
       products:[], //用來顯示產品列表的資料
       tempProducts:{}, //用來接使用者輸入的資料
       isNew:false,
+      isLoading:false,
+      status:{
+        preuploadFile:false,
+      }
     };
   },
 
@@ -145,8 +172,10 @@ export default {
     getProducts(){
       const vm = this;
         // 將api以環境變數取代
+        vm.isLoading = true;
       const api=`${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/products`
         this.$http.get(api).then((response) =>{
+          vm.isLoading = false;
           vm.products = response.data.products;
         })
       },
@@ -165,9 +194,15 @@ export default {
         }
         $('#pdcModal').modal('show');
       },
+      opendropModal(item){
+        $('#dropModel').modal('show');
+        this.tempProducts = item;
+        console.log(this.tempProducts);
+      },
       updateProducts(){
         const vm = this;
         let api=`${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/product`;
+        //此段是讓api呼叫的方式可以因不同條件修改，原本新增的本身就為put
         let httpMethod = 'post';
         // 如果isNew為false的話就是更新內容，需要跑更新的api
         if(!vm.isNew){
@@ -189,7 +224,49 @@ export default {
               vm.getProducts();
             }
           })
-      }
+      },
+
+      // 刪除產品Function
+      dropProducts(item){
+        const vm = this;
+        let api=`${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/product/${item.id}`;
+        // console.log(item.id);
+        this.$http.delete(api, item.id).then((response) =>{
+          if(response.data.success){
+            alert(`已成功刪除 ${item.title}`);
+          }else{
+            alert("刪除失敗!!");
+          }
+          vm.getProducts();
+          $('#dropModel').modal('hide');
+        })
+      },
+
+      // 上傳圖片Funtion
+     uploadFile(){
+       const uploadedFile = this.$refs.files.files[0];
+       const vm = this;
+       const formData = new FormData();
+       formData.append('file-to-file',uploadedFile);
+       vm.status.preuploadFile = true;
+       // console.log(formData);
+       const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/upload`;
+       //post(網址, 檔案本身, 格式物件)
+       this.$http.post(api, formData, {
+         headers:{
+           'Content-Type':'multipart/form-data'
+         }
+       }).then((response)=>{
+         vm.status.preuploadFile = false;
+         if(response.data.success){
+           // vm.tempProducts.imageUrl = response.data.imageUrl;
+           // console.log(vm.tempProducts);
+           // vm.$set(要寫入的變數, 要寫入的欄位, 寫入的值)
+           vm.$set(vm.tempProducts,'imageUrl',response.data.imageUrl);
+           console.log(vm.products);
+         }
+       })
+     }
     },
   //在created階段的時候呼叫methods，記得要加this
   created(){
