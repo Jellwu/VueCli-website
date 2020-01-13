@@ -3,7 +3,7 @@
     <loading :active.sync="isLoading"></loading>
     <div class="text-right mb-4">
       <button type="button" class="btn btn-primary" @click="openPdcModal(true)">
-        產品新增
+        新增產品
         </button>
     </div>
     <table class="table mt-4">
@@ -21,8 +21,8 @@
         <tr v-for="(item) in products" :key="item.id">
           <td>{{item.category}}</td>
           <td>{{item.title}}</td>
-          <td class="text-right">{{item.origin_price}}</td>
-          <td class="text-right">{{item.price}}</td>
+          <td class="text-right">{{item.origin_price | currency }} </td>
+          <td class="text-right">{{item.price | currency }} </td>
           <td v-if="item.is_enabled" class="text-success">啟用</td>
           <td v-else="item.is_enabled" class="text-danger">未啟用</td>
           <td>
@@ -32,26 +32,6 @@
         </tr>
       </tbody>
     </table>
-      <!-- <nav aria-label="Page navigation example">
-        <ul class="pagination">
-          <li class="page-item" :class="{'disabled': pagination.has_pre === false}">
-            <a class="page-link" href="#" aria-label="Previous" @click.prevent="getProducts(pagination.current_page - 1)">
-              <span aria-hidden="true">&laquo;</span>
-            </a>
-          </li>
-          <li class="page-item" v-for="pages in pagination.total_pages"
-          :key="pages" :class="{'active':pagination.current_page === pages}">
-            <a class="page-link" href="#" @click.prevent="getProducts(pages)">{{pages}}</a>
-          </li>
-          <li class="page-item" :class="{'disabled': pagination.has_next === false}">
-            <a class="page-link" href="#" aria-label="Next" @click.prevent="getProducts(pagination.current_page + 1)">
-              <span aria-hidden="true" >&raquo;</span>
-            </a>
-          </li>
-        </ul>
-      </nav> -->
-
-
 
     <!-- Modal -->
     <div class="modal fade" id="pdcModal" tabindex="-1" role="dialog"
@@ -191,7 +171,7 @@ export default {
 
   methods:{
     //ES6方法：預設參數，在未有參數傳入前，此函式的page變數皆為"1"
-    getProducts(page = 1){
+    getProducts(page){
       const vm = this;
         // 將api以環境變數取代
         vm.isLoading = true;
@@ -304,7 +284,7 @@ export default {
     this.$bus.$on('page:pages' ,(page) =>{
       vm.getProducts(page);
     })
-
+    vm.getProducts()
   }
 }
 </script>

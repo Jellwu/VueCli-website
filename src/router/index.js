@@ -9,6 +9,9 @@ import HOME from '@/components/HelloWorld.vue';
 import Login from '@/components/page/login.vue';
 import Dashboard from '@/components/dashboard/dashboard.vue';
 import Products from '@/components/page/products.vue';
+import Orders from '@/components/page/orders.vue';
+import Coupon from '@/components/page/coupon.vue';
+import Customorder from '@/components/page/customorder.vue'
 
 //元件路徑import
 
@@ -40,7 +43,31 @@ export default new VueRouter({
           path: 'products',
           component:Products,
           meta: { requiresAuth: true }
-        }
+        },
+        {
+          name: '訂單明細',
+          path: 'orders',
+          component:Orders,
+          meta: { requiresAuth: true }
+        },
+        {
+          name: '優惠券',
+          path: 'coupon',
+          component:Coupon,
+          meta: { requiresAuth: true }
+        },
+    ]
+    },
+    {
+      name: '後台管理',
+      path: '/',
+      component:Dashboard,
+      children:[
+        {
+          name: '模擬訂單',
+          path: 'customorder',
+          component:Customorder,
+        },
     ]
     },
   ]

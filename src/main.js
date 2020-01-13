@@ -14,6 +14,8 @@ import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
 //註冊EventBus
 import './bus'
+//注入filter內容
+import currencyFilter from './filter/currency.js'
 
 //將cookie寫到localstorage儲存
 axios.defaults.withCredentials = true;
@@ -24,6 +26,9 @@ Vue.config.productionTip = false;
 
 //全域註冊vue loading overlay
 Vue.component('Loading',Loading);
+
+//使用currency(filter)
+Vue.filter('currency',currencyFilter);
 
 
 /* eslint-disable no-new */

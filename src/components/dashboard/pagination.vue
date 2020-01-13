@@ -38,8 +38,7 @@ export default{
           current_page,
           has_pre,
           has_next,
-        };
-        console.log(this.pagination);
+        }
       },
       // 預設page為1，設定為參數丟到$bus準備給外層取用
       getProducts(page = 1){
@@ -50,12 +49,12 @@ export default{
 // 頁面建立時呼叫
   created(){
       const vm = this;
+      vm.getProducts();
       // 取用外部給的page:push，取完之後丟到內部的pagination(on監聽方法)
       vm.$bus.$on('page:push',(total_pages,current_page,has_pre,has_next) => {
         vm.updatePage(total_pages,current_page,has_pre,has_next);
      });
      // 在頁面開始時就先呼叫預設分頁為1的產品列表function
-     vm.getProducts();
     }
   }
 

@@ -18,8 +18,8 @@
 <script>
 import Navbar from './navbar.vue';
 import Sidebar from './sidebar.vue';
-import Alert from './alertMsg.vue'
-import Pagenation from './pagination.vue'
+import Alert from './alertMsg.vue';
+import Pagenation from './pagination.vue';
 
 export default{
   components:{
