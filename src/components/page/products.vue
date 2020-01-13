@@ -32,24 +32,25 @@
         </tr>
       </tbody>
     </table>
-    <nav aria-label="Page navigation example">
-      <ul class="pagination">
-        <li class="page-item" :class="{'disabled': pagination.has_pre === false}">
-          <a class="page-link" href="#" aria-label="Previous" @click.prevent="getProducts(pagination.current_page - 1)">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        <li class="page-item" v-for="pages in pagination.total_pages"
-        :key="pages" :class="{'active':pagination.current_page === pages}">
-          <a class="page-link" href="#" @click.prevent="getProducts(pages)">{{pages}}</a>
-        </li>
-        <li class="page-item" :class="{'disabled': pagination.has_next === false}">
-          <a class="page-link" href="#" aria-label="Next" @click.prevent="getProducts(pagination.current_page + 1)">
-            <span aria-hidden="true" >&raquo;</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
+      <!-- <nav aria-label="Page navigation example">
+        <ul class="pagination">
+          <li class="page-item" :class="{'disabled': pagination.has_pre === false}">
+            <a class="page-link" href="#" aria-label="Previous" @click.prevent="getProducts(pagination.current_page - 1)">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          <li class="page-item" v-for="pages in pagination.total_pages"
+          :key="pages" :class="{'active':pagination.current_page === pages}">
+            <a class="page-link" href="#" @click.prevent="getProducts(pages)">{{pages}}</a>
+          </li>
+          <li class="page-item" :class="{'disabled': pagination.has_next === false}">
+            <a class="page-link" href="#" aria-label="Next" @click.prevent="getProducts(pagination.current_page + 1)">
+              <span aria-hidden="true" >&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      </nav> -->
+
 
 
     <!-- Modal -->
@@ -184,7 +185,7 @@ export default {
       status:{
         preuploadFile:false,
       },
-      pagination:{},  //用來接回傳的分頁資料
+      // pagination:{},  //用來接回傳的分頁資料
     };
   },
 
@@ -200,7 +201,8 @@ export default {
           vm.isLoading = false;
           vm.products = response.data.products;
           vm.pagination = response.data.pagination;
-          console.log(vm.pagination.total_pages);
+          //  將外層拿到的參數丟到$bus準備給內層取用
+          this.$bus.$emit('page:push',vm.pagination.total_pages,vm.pagination.current_page,vm.pagination.has_pre,vm.pagination.has_next);
         })
       },
 
@@ -297,7 +299,11 @@ export default {
     },
   //在created階段的時候呼叫methods，記得要加this
   created(){
-    this.getProducts();
+    const vm = this;
+    // 取用內層給的page:pages，將參數丟到getProducts
+    this.$bus.$on('page:pages' ,(page) =>{
+      vm.getProducts(page);
+    })
 
   }
 }

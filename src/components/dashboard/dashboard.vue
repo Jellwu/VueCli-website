@@ -7,9 +7,11 @@
           <Sidebar/>
           <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
             <router-view/>
+            <Pagenation/>
           </main>
         </div>
       </div>
+
   </div>
 </template>
 
@@ -17,12 +19,14 @@
 import Navbar from './navbar.vue';
 import Sidebar from './sidebar.vue';
 import Alert from './alertMsg.vue'
+import Pagenation from './pagination.vue'
 
 export default{
   components:{
     Navbar,
     Sidebar,
-    Alert
+    Alert,
+    Pagenation
   }
 }
 
