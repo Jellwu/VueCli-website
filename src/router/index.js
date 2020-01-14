@@ -59,7 +59,7 @@ export default new VueRouter({
     ]
     },
     {
-      name: '後台管理',
+      name: '訂單管理',
       path: '/',
       component:Dashboard,
       children:[

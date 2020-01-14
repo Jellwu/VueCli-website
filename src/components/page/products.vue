@@ -111,7 +111,7 @@
             <div class="form-group">
               <div class="form-check">
                 <input class="form-check-input" type="checkbox"
-                  id="is_enabled" v-model="tempProducts.is_enabled" :true_value="1" :false_value="0">
+                  id="is_enabled" v-model="tempProducts.is_enabled" :true-value="1" :false-value="0">
                 <label class="form-check-label" for="is_enabled">
                   是否啟用
                 </label>
@@ -165,7 +165,7 @@ export default {
       status:{
         preuploadFile:false,
       },
-      // pagination:{},  //用來接回傳的分頁資料
+      pagination:{},  //用來接回傳的分頁資料
     };
   },
 
@@ -181,6 +181,7 @@ export default {
           vm.isLoading = false;
           vm.products = response.data.products;
           vm.pagination = response.data.pagination;
+          console.log(response.data);
           //  將外層拿到的參數丟到$bus準備給內層取用
           this.$bus.$emit('page:push',vm.pagination.total_pages,vm.pagination.current_page,vm.pagination.has_pre,vm.pagination.has_next);
         })
@@ -192,7 +193,7 @@ export default {
         if(isNew){
           this.tempProducts = {};
           this.isNew = true;
-      // 若傳入的isNew為false，就將參數傳入將參數指定給tempProdcust，準備讓使用者修改
+          // 若傳入的isNew為false，就將參數傳入將參數指定給tempProdcust，準備讓使用者修改
         }else{
           // object.assign({},物件)是將物件丟到一個空的陣列，以解決因參考值影響兩個變數的問題
           this.tempProducts = Object.assign({},item);
@@ -284,7 +285,7 @@ export default {
     this.$bus.$on('page:pages' ,(page) =>{
       vm.getProducts(page);
     })
-    vm.getProducts()
+    vm.getProducts();
   }
 }
 </script>
