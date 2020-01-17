@@ -1,13 +1,9 @@
 <template>
   <div>
-    <div class="text-right mb-4">
-      <button type="button" class="btn btn-primary" @click="openPdcModal(true)">
-         新增訂單
-        </button>
-    </div>
-    <table class="table mt-4">
-      <thead>
-          <td width="100px">時間</td>
+    <h4 class="mb-5 text-center">訂購清單</h4>
+    <table class="table mt-5">
+      <thead class="bg-primary text-white" >
+          <td width="200px">訂購時間</td>
           <td width="150px">訂購人姓名</td>
           <td>訂購品項</td>
           <td width="150px">價格</td>
@@ -15,7 +11,7 @@
       </thead>
       <tbody>
         <tr v-for = "order in orders" :key="order.id">
-          <td>{{ order.create_at }}</td>
+          <td>{{ order.create_at|timeTranse }}</td>
           <td>{{ order.user.name }}</td>
           <td>
             <!-- 陣列下的第二層物件，包兩個v-for -->
@@ -59,6 +55,9 @@ export default {
       vm.getorder(page);
     })
     vm.getorder();
+    let timestamp = 1513598707
+    let date = new Date(timestamp * 1000)
+    console.log(`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`);
   }
 }
 </script>

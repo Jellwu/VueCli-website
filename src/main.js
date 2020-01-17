@@ -16,6 +16,7 @@ import 'vue-loading-overlay/dist/vue-loading.css';
 import './bus'
 //注入filter內容
 import currencyFilter from './filter/currency.js'
+import timeTranseFilter from './filter/timeTranse.js'
 //注入vee-validate表單驗證工具
 import {
   ValidationObserver,
@@ -45,6 +46,7 @@ Vue.config.productionTip = false;
 Vue.component('Loading',Loading);
 //使用currency(filter)
 Vue.filter('currency',currencyFilter);
+Vue.filter('timeTranse',timeTranseFilter);
 
 
 /* eslint-disable no-new */
