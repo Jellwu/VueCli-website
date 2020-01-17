@@ -181,7 +181,7 @@ export default {
           vm.isLoading = false;
           vm.products = response.data.products;
           vm.pagination = response.data.pagination;
-          console.log(response.data);
+          console.log(vm.products);
           //  將外層拿到的參數丟到$bus準備給內層取用
           this.$bus.$emit('page:push',vm.pagination.total_pages,vm.pagination.current_page,vm.pagination.has_pre,vm.pagination.has_next);
         })

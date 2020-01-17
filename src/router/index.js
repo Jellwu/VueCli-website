@@ -12,6 +12,7 @@ import Products from '@/components/page/products.vue';
 import Orders from '@/components/page/orders.vue';
 import Coupon from '@/components/page/coupon.vue';
 import Customorder from '@/components/page/customorder.vue'
+import CustomorderCheckout from '@/components/page/Customorder_Checkout.vue'
 
 //元件路徑import
 
@@ -67,6 +68,11 @@ export default new VueRouter({
           name: '模擬訂單',
           path: 'customorder',
           component:Customorder,
+        },
+        {
+          name: 'CustomorderCheckout',
+          path: 'CustomorderCheckout/:orderId',
+          component:CustomorderCheckout,
         },
     ]
     },

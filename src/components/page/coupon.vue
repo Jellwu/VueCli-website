@@ -44,7 +44,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">新增優惠券</h5>
+          <h5 class="modal-title" id="exampleModalLabel">{{ modelTitle }}優惠券</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -117,6 +117,7 @@ export default {
     return {
       coupon: [],
       tempCoupon: {},
+      modelTitle: "",
       isNew:false,
       isLoading: false,
       pagination: {},
@@ -125,9 +126,11 @@ export default {
   methods: {
     openCouponModal(isNew ,item) {
       if(isNew){
+        this.modelTitle = "新增";
         this.tempCoupon = {};
         this.isNew = true;
       }else{
+        this.modelTitle = "編輯";
         this.tempCoupon = Object.assign({},item);
         this.isNew = false;
       }
@@ -179,12 +182,12 @@ export default {
       const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/coupon/${id}`;
       vm.isLoading = true;
       this.$http.delete(api).then((response) =>{
-        vm.isLoading = false;
         vm.showCoupon();
+        vm.isLoading = false;
         if(response.data.success){
-          alert(response.data.message)
+          alert(response.data.message);
         }else{
-          alert("刪除失敗！")
+          alert("刪除失敗！");
         }
       })
       $('#couponDelModal').modal('hide');
